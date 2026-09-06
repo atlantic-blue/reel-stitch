@@ -153,11 +153,15 @@ fetch is still running, both processes write the same temporary files. One of th
 and renames it. The other then fails with `Error: The file "<name>.ckpt.partial" doesn't exist` and
 exits with a non zero status. Fetch the models to completion first. Then generate.
 
-**The command line tool prints no progress when it is not attached to a terminal.** Redirect the
-output to a file and that file stays empty for the whole run. Run the command in the background and
-you get the same result. You see no step counter and no estimate of the time left. Run it in a
-terminal. If you cannot, set an explicit step count in advance. You can then work the cost out from
-the time for one step.
+**The command line tool buffers its output when you redirect it.** Send the output to a file and
+that file stays empty while the run is in progress. Everything arrives at once when the process
+exits. The file then holds the whole progress trace, every sampling step from 1 to 20, the path it
+wrote and the timing summary. The trace carries the terminal control codes. Measured on the
+reference machine on 6 September 2026.
+
+Nothing is lost, but you cannot watch a redirected run. You get no step counter and no estimate of
+the time left. Run it in a terminal. If you cannot, set an explicit step count in advance. You can
+then work the cost out from the time for one step.
 
 **Metal does not implement the Float8_e4m3fn type.** A checkpoint quantised to that format fails on
 Apple Silicon. This one is reported by others, not measured here. It was read in published accounts

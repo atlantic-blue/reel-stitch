@@ -15,11 +15,13 @@ date.
 - macOS, Darwin 24.6.
 - Draw Things 1.20260716.0.
 - `draw-things-cli` 1.20260716.0.
-- Measured on 5 September 2026.
+- Measured on 5 September 2026, except where a line below carries its own date.
 
 ## Stills
 
 - 704 by 1280, 20 steps. 44.5 seconds in total. 1.71 seconds for each sampling step.
+- 704 by 1280, 20 steps. 46.86 seconds in total. 1.70 seconds for each sampling step. Measured on 6
+  September 2026. This is a second observation of the line above, not a replacement for it.
 - 768 by 1344, 40 steps. 102.8 seconds in total. 2.27 seconds for each sampling step. Peak memory
   footprint 5.9 gigabytes.
 
