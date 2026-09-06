@@ -14,9 +14,12 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check:prose": "node scripts/check-prose.ts",
+    "check:mermaid": "node scripts/check-mermaid.ts"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.17.0",
     "@types/node": "^22.10.0",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2"
