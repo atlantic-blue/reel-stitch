@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "reel.json",
+  "description": "One reel, planned and rendered in one directory. Every path is relative to the directory that holds this file. Three rules cannot be written in JSON Schema and live only in the validator: shot indexes must be contiguous and ascending, every castingIds entry must match a casting entry, and casting ids must be unique.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "createdAt",
+    "idea",
+    "goal",
+    "aspect",
+    "durationSeconds",
+    "look",
+    "casting",
+    "shots",
+    "render",
+    "outputPath"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "description": "Semantic version of the manifest shape.",
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+    },
+    "id": {
+      "description": "A ULID, made when the reel is planned.",
+      "type": "string",
+      "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+    },
+    "createdAt": {
+      "description": "An RFC 3339 timestamp.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}[Tt]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([Zz]|[+-]\\d{2}:\\d{2})$"
+    },
+    "idea": {
+      "description": "The one line the reel came from.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "goal": {
+      "description": "What the reel is for.",
+      "type": "string",
+      "enum": ["act", "reach", "explain"]
+    },
+    "aspect": {
+      "description": "The frame shape of the finished video.",
+      "type": "string",
+      "enum": ["9:16", "1:1", "16:9"]
+    },
+    "durationSeconds": {
+      "description": "How long the finished video runs.",
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60
+    },
+    "look": { "$ref": "#/$defs/look" },
+    "casting": {
+      "description": "People, places and objects more than one shot can name.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/castingEntry" }
+    },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": { "$ref": "#/$defs/shot" }
+    },
+    "render": { "$ref": "#/$defs/render" },
+    "outputPath": {
+      "description": "The finished video. Null until a later slice cuts it.",
+      "type": ["string", "null"]
+    }
+  },
+  "$defs": {
+    "look": {
+      "description": "The visual rules that hold across every shot.",
+      "type": "object",
+      "required": ["palette", "lens", "lighting", "grade", "filmStock", "negativePrompt"],
+      "properties": {
+        "palette": { "type": "string" },
+        "lens": { "type": "string" },
+        "lighting": { "type": "string" },
+        "grade": { "type": "string" },
+        "filmStock": { "type": "string" },
+        "negativePrompt": {
+          "description": "What no shot may contain.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "castingEntry": {
+      "type": "object",
+      "required": ["id", "description"],
+      "properties": {
+        "id": {
+          "description": "Unique within the reel.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "description": { "type": "string", "minLength": 3, "maxLength": 200 }
+      }
+    },
+    "shotPrompt": {
+      "description": "The text a still model reads for one shot.",
+      "type": "object",
+      "required": ["entity", "scene", "motion", "aesthetic", "style", "assembled", "negative"],
+      "properties": {
+        "entity": { "type": "string", "minLength": 1 },
+        "scene": { "type": "string", "minLength": 1 },
+        "motion": { "type": "string", "minLength": 1 },
+        "aesthetic": { "type": "string", "minLength": 1 },
+        "style": { "type": "string", "minLength": 1 },
+        "assembled": {
+          "description": "The five parts joined in order, between 80 and 120 whitespace separated words.",
+          "type": "string",
+          "pattern": "^\\s*\\S+(\\s+\\S+){79,119}\\s*$"
+        },
+        "negative": { "type": "string", "minLength": 1 }
+      }
+    },
+    "shot": {
+      "type": "object",
+      "required": [
+        "index",
+        "startSeconds",
+        "durationSeconds",
+        "beat",
+        "caption",
+        "source",
+        "capturePath",
+        "prompt",
+        "motionPrompt",
+        "seed",
+        "stillPath",
+        "clipPath",
+        "approved",
+        "castingIds"
+      ],
+      "properties": {
+        "index": {
+          "description": "Position in the reel, counted from zero.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "startSeconds": { "type": "number", "minimum": 0 },
+        "durationSeconds": { "type": "number", "minimum": 1, "maximum": 10 },
+        "beat": {
+          "description": "What this shot does for the story.",
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "caption": { "type": ["string", "null"] },
+        "source": {
+          "description": "Where this shot's still comes from.",
+          "type": "string",
+          "enum": ["generated", "capture"]
+        },
+        "capturePath": { "type": ["string", "null"] },
+        "prompt": {
+          "oneOf": [{ "$ref": "#/$defs/shotPrompt" }, { "type": "null" }]
+        },
+        "motionPrompt": { "type": ["string", "null"] },
+        "seed": { "type": "integer", "minimum": 0 },
+        "stillPath": { "type": ["string", "null"] },
+        "clipPath": { "type": ["string", "null"] },
+        "approved": { "type": "boolean" },
+        "castingIds": {
+          "description": "Ids of casting entries this shot uses.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "source": { "const": "capture" } }, "required": ["source"] },
+          "then": {
+            "properties": {
+              "capturePath": { "type": "string", "minLength": 1 },
+              "prompt": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "source": { "const": "generated" } }, "required": ["source"] },
+          "then": {
+            "properties": {
+              "capturePath": { "type": "null" },
+              "prompt": { "$ref": "#/$defs/shotPrompt" }
+            }
+          }
+        }
+      ]
+    },
+    "render": {
+      "description": "The settings the local models run under.",
+      "type": "object",
+      "required": ["model", "width", "height", "steps", "frames", "fps", "modelsDir"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 64, "maximum": 2048, "multipleOf": 64 },
+        "height": { "type": "integer", "minimum": 64, "maximum": 2048, "multipleOf": 64 },
+        "steps": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "frames": { "type": "integer", "minimum": 1, "maximum": 121 },
+        "fps": { "type": "integer", "minimum": 1, "maximum": 60 },
+        "modelsDir": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
