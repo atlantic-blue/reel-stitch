@@ -83,3 +83,23 @@ Add `hands, fingers` when hands are not the subject.
 Add `blue colour cast, teal grade, heavy colour grade` for a night scene.
 
 Nothing else goes in the negative prompt. Rule five says why.
+
+## The rules in code
+
+`src/prompt/` holds these rules as code. The assembler in `assemble.ts` joins the five clauses and
+builds the negative prompt. It does not judge. The checker in `check.ts` judges any prompt, and it
+returns a list of findings. Each finding names one rule identifier. The list below says which rule
+each identifier enforces, so a reader who gets a finding can find the rule it comes from.
+
+- `order` enforces rule one.
+- `length` enforces rule two. It counts a word as a run of characters with no whitespace in it.
+- `one-actor` enforces rule three.
+- `darkness` enforces rule four.
+- `negative-lighting` enforces rule five.
+- `casting-stated` enforces rule six.
+- `hands` enforces rule seven.
+- `white-balance` enforces rule eight.
+- `standard-negative` enforces the standard negative prompt above.
+
+The term lists live in `src/prompt/terms.ts`. A test reads this page and holds the lists against
+that file, so the document and the code cannot drift apart.

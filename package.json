@@ -8,7 +8,8 @@
     "node": ">=22.6.0"
   },
   "exports": {
-    "./manifest": "./src/manifest/index.ts"
+    "./manifest": "./src/manifest/index.ts",
+    "./prompt": "./src/prompt/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
