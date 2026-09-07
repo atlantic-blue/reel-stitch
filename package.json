@@ -9,7 +9,11 @@
   },
   "exports": {
     "./manifest": "./src/manifest/index.ts",
-    "./prompt": "./src/prompt/index.ts"
+    "./prompt": "./src/prompt/index.ts",
+    "./still": "./src/still/index.ts"
+  },
+  "bin": {
+    "reel": "./src/cli/reel.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

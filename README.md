@@ -34,3 +34,5 @@ Capture shots skip the first four steps. You supply the file, and it enters at t
   software versions and the date beside it.
 - [docs/manifest.md](docs/manifest.md). The `reel.json` contract that every command reads and
   writes.
+- [docs/commands.md](docs/commands.md). The commands, their flags, the paths they write and the
+  exit codes they return.
